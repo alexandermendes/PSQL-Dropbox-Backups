@@ -1,13 +1,13 @@
 # PSQL-Dropbox-Backups
 
-BASH script to save date-based backups locally and also upload them to Dropbox.
+BASH script to store date-based backups both locally and on Dropbox.
 
 
 ## Installation
 
-Download and configure [Dropbox-Uploader](https://github.com/andreafabrizi/Dropbox-Uploader),
-making sure to grant full Dropbox permissions, otherwise this script won't be able to
-delete previous backups according to your configuration details.
+Download and configure [Dropbox-Uploader](https://github.com/andreafabrizi/Dropbox-Uploader).
+Make sure that you grant full Dropbox permissions, otherwise this script won't be able to
+remove any expired backups.
 
 Next, download this repository and make [psql_backup.sh](psql_backup.sh) executable:
 
@@ -20,7 +20,7 @@ chmod +x psql_backup.sh
 
 ## Configuration
 
-Edit the configuration variables at the top of the script:
+The following configuration variables can be found at the top of the script:
 
 ``` bash
 # Optional hostname to adhere to pg_hba policies (default is "localhost").
@@ -32,13 +32,13 @@ USERNAME=
 # Optional password for the above user.
 PASSWORD=
 
-# Which day to take the weekly backup from (1-7 = Monday-Sunday)
+# Which day to take the weekly backup from (1-7 = Monday-Sunday).
 DAY_OF_WEEK_TO_KEEP=7
 
-# How many weeks to keep weekly backups
+# Number of days to keep daily backups.
 DAYS_TO_KEEP=7
 
-# How many weeks to keep weekly backups
+# How many weeks to keep weekly backups.
 WEEKS_TO_KEEP=4
 
 # This dir must be writable by the user the script is running as.
