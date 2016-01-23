@@ -70,10 +70,10 @@ function upload_to_dropbox()
         UPLOAD_DESTINATION="/backups/";
     fi
 
-    UPLOAD_DESTINATION=$UPLOAD_DESTINATION$TAIL
+    REMOTE_FILE=$UPLOAD_DESTINATION$TAIL
 
-    $DROPBOX_UPLOADER upload $BACKUP_PATH $UPLOAD_DESTINATION
-    echo "\n"
+    $DROPBOX_UPLOADER upload $BACKUP_PATH $REMOTE_FILE
+    echo -e "\n"
 }
 
 
@@ -109,7 +109,7 @@ function perform_backups()
 
     done
 
-    echo -e "\nAll databases backed up!"
+    echo -e "All databases backed up!"
 }
 
 
