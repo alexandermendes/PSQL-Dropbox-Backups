@@ -54,11 +54,11 @@ UPLOAD_DESTINATION=/postgres/backups/
 You can execute the script by running:
 
 ``` bash
-./psql_backups.sh
+./psql_backup.sh
 ```
 
 To schedule the script to exeucte daily you can do this:
 
 ``` bash
-mv psql_backups.sh /etc/cron.daily/psql_backups
+mv psql_backup.sh /etc/cron.daily/psql_backup
 ```
