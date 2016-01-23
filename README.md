@@ -6,7 +6,10 @@ BASH script to save date-based backups locally and also upload them to Dropbox.
 ## Installation
 
 Download and configure [Dropbox-Uploader](https://github.com/andreafabrizi/Dropbox-Uploader),
-then download this script and make it executable:
+making sure to grant full Dropbox permissions, otherwise this script won't be able to
+delete previous backups according to your configuration details.
+
+Next, download this repository and make [psql_backup.sh](psql_backup.sh) executable:
 
 ``` bash
 git clone https://github.com/alexandermendes/PSQL-Dropbox-Backups
