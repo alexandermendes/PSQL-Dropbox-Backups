@@ -25,13 +25,13 @@ USERNAME=
 # Optional password for the above user.
 PASSWORD=
 
-# Which day to take the weekly backup from (1-7 = Monday-Sunday)
+# Which day to take the weekly backup from (1-7 = Monday-Sunday).
 DAY_OF_WEEK_TO_KEEP=7
 
-# How many weeks to keep weekly backups
-DAYS_TO_KEEP=4
+# Number of days to keep daily backups.
+DAYS_TO_KEEP=7
 
-# How many weeks to keep weekly backups
+# How many weeks to keep weekly backups.
 WEEKS_TO_KEEP=2
 
 # This dir must be writable by the user the script is running as.
