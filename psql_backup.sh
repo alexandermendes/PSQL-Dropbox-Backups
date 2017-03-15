@@ -37,8 +37,14 @@ WEEKS_TO_KEEP=2
 # This dir must be writable by the user the script is running as.
 BACKUP_DIR=/srv/backups/postgres/
 
-# Output file format [c|t|p|d] (custom, tar, plain text, directory)
-BACKUP_FORMAT=p
+# Will produce a custom-format backup if set to "yes"
+ENABLE_CUSTOM_BACKUPS=yes
+ 
+# Will produce a gzipped plain-format backup if set to "yes"
+ENABLE_PLAIN_BACKUPS=yes
+ 
+# Will produce a gzipped tar-format backup if set to "yes"
+ENABLE_TAR_BACKUPS=yes
 
 # Path to the executable dropbox_uploader script.
 DROPBOX_UPLOADER=/opt/bin/dropbox_uploader.sh
@@ -98,14 +104,36 @@ function perform_backups()
 
     for DATABASE in `psql -h "$HOSTNAME" -U "$USERNAME" -At -c "$FULL_BACKUP_QUERY" postgres`; do
         echo -e "\nBacking up $DATABASE to $FINAL_BACKUP_DIR"
+        
+        if [ $ENABLE_PLAIN_BACKUPS = "yes" ]; then
+            if ! pg_dump -Fp -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
+                echo "[!!ERROR!!] Failed to produce backup database $DATABASE" 1>&2
+            else
+                mv $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.gz
 
-        if ! pg_dump -F "$BACKUP_FORMAT" -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
-            echo "[!!ERROR!!] Failed to produce backup database $DATABASE" 1>&2
-        else
-            mv $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.gz
+                upload_to_dropbox $FINAL_BACKUP_DIR"$DATABASE".sql.gz $TAIL_DIR"$DATABASE".sql.gz
+            fi
+        fi;
+        
+        if [ $ENABLE_CUSTOM_BACKUPS = "yes" ]; then
+            if ! pg_dump -Fc -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress; then
+                echo "[!!ERROR!!] Failed to produce backup database $DATABASE" 1>&2
+            else
+                mv $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress $FINAL_BACKUP_DIR"$DATABASE".custom
 
-            upload_to_dropbox $FINAL_BACKUP_DIR"$DATABASE".sql.gz $TAIL_DIR"$DATABASE".sql.gz
-        fi
+                upload_to_dropbox $FINAL_BACKUP_DIR"$DATABASE".custom $TAIL_DIR"$DATABASE".custom
+            fi
+        fi;
+        
+        if [ $ENABLE_TAR_BACKUPS = "yes" ]; then
+            if ! pg_dump -Ft -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -f $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz.in_progress; then
+                echo "[!!ERROR!!] Failed to produce backup database $DATABASE" 1>&2
+            else
+                mv $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz
+
+                upload_to_dropbox $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz $TAIL_DIR"$DATABASE".sql.tar.gz
+            fi
+        fi;
 
     done
 }
