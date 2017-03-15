@@ -37,7 +37,7 @@ WEEKS_TO_KEEP=2
 # This dir must be writable by the user the script is running as.
 BACKUP_DIR=/srv/backups/postgres/
 
-# Output file format [c|t|p] (custom, tar, plain text)
+# Output file format [c|t|p|d] (custom, tar, plain text, directory)
 BACKUP_FORMAT=p
 
 # Path to the executable dropbox_uploader script.
