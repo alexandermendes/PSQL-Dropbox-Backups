@@ -116,7 +116,7 @@ function perform_backups()
         fi;
         
         if [ $ENABLE_CUSTOM_BACKUPS = "yes" ]; then
-            if ! pg_dump -Fc -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress; then
+            if ! pg_dump -Fc -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -f $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress; then
                 echo "[!!ERROR!!] Failed to produce backup database $DATABASE" 1>&2
             else
                 mv $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress $FINAL_BACKUP_DIR"$DATABASE".custom
@@ -126,7 +126,7 @@ function perform_backups()
         fi;
         
         if [ $ENABLE_TAR_BACKUPS = "yes" ]; then
-            if ! pg_dump -Ft -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -f $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz.in_progress; then
+            if ! pg_dump -Ft -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz.in_progress; then
                 echo "[!!ERROR!!] Failed to produce backup database $DATABASE" 1>&2
             else
                 mv $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.tar.gz
