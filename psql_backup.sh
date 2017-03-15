@@ -37,6 +37,9 @@ WEEKS_TO_KEEP=2
 # This dir must be writable by the user the script is running as.
 BACKUP_DIR=/srv/backups/postgres/
 
+# Output file format [c|t|p] (custom, tar, plain text)
+BACKUP_FORMAT=p
+
 # Path to the executable dropbox_uploader script.
 DROPBOX_UPLOADER=/opt/bin/dropbox_uploader.sh
 
@@ -96,7 +99,7 @@ function perform_backups()
     for DATABASE in `psql -h "$HOSTNAME" -U "$USERNAME" -At -c "$FULL_BACKUP_QUERY" postgres`; do
         echo -e "\nBacking up $DATABASE to $FINAL_BACKUP_DIR"
 
-        if ! pg_dump -Fp -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
+        if ! pg_dump -F "$BACKUP_FORMAT" -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
             echo "[!!ERROR!!] Failed to produce backup database $DATABASE" 1>&2
         else
             mv $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.gz
